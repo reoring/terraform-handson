@@ -9,7 +9,7 @@ provider "aws" {
 
 data "aws_ami" "amazon-linux2" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["self"]
 
   filter {
     name   = "name"
