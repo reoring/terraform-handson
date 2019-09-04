@@ -1,0 +1,42 @@
+{
+  "min_packer_version": "1.4.2",
+  "variables": {
+    "aws_region": "ap-northeast-1",
+    "aws_profile": "{{env `AWS_PROFILE`}}"
+  },
+  "builders": [
+    {
+      "ami_name": "docker-amazon-linux2-{{isotime | clean_ami_name}}",
+      "ami_description": "An Amazon Linux 2 AMI that has Docker installed.",
+      "profile": "{{user `aws_profile`}}",
+      "instance_type": "t2.micro",
+      "name": "amazon-linux-ami",
+      "region": "{{user `aws_region`}}",
+      "type": "amazon-ebs",
+      "associate_public_ip_address": true,
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "architecture": "x86_64",
+          "name": "*amzn2-ami-hvm-*",
+          "block-device-mapping.volume-type": "gp2",
+          "root-device-type": "ebs"
+        },
+        "owners": [
+          "amazon"
+        ],
+        "most_recent": true
+      },
+      "ssh_username": "ec2-user"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "{{template_dir}}/setup_amazon-linux.sh",
+      "only": [
+        "amazon-linux-ami"
+      ]
+    }
+  ]
+}
